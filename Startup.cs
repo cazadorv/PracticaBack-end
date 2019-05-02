@@ -10,12 +10,25 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Nancy;
+using Nancy.Owin;
 
 namespace practica_Back_end
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public class ClienteModule : NancyModule
+        {
+            public ClienteModule()
+            {
+                Get("/cliente", _=> 
+                {
+                   return Response.AsJson(new Cliente(1,"Carlos","Garcia","La Pinta 11"));
+                });
+            }
+
+        }
+       public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
@@ -35,14 +48,7 @@ namespace practica_Back_end
             {
                 app.UseDeveloperExceptionPage();
             }
-            else
-            {
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
-
-            app.UseHttpsRedirection();
-            app.UseMvc();
+            app.UseOwin(b => b.UseNancy());
         }
     }
 }
